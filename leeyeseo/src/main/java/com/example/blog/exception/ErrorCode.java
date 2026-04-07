@@ -1,9 +1,7 @@
 package com.example.blog.exception;
 
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-@Getter
 public enum ErrorCode {
 
     // 400
@@ -32,5 +30,17 @@ public enum ErrorCode {
         this.status = status;
         this.code = code;
         this.message = message;
+    }
+
+    public HttpStatus getStatus() {
+        return status;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getMessage() {
+        return message;
     }
 }
