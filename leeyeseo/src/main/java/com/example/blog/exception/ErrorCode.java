@@ -1,7 +1,9 @@
 package com.example.blog.exception;
 
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+@Getter
 public enum ErrorCode {
 
     // 400
@@ -9,6 +11,7 @@ public enum ErrorCode {
     MISSING_REQUIRED_VALUE(HttpStatus.BAD_REQUEST, "400_001", "필수 입력값이 누락되었습니다."),
     TITLE_TOO_LONG(HttpStatus.BAD_REQUEST, "400_002", "제목은 최대 255자까지 입력 가능합니다."),
     INVALID_TYPE_VALUE(HttpStatus.BAD_REQUEST, "400_004", "데이터 타입이 올바르지 않습니다."),
+    INVALID_STATE_TRANSITION(HttpStatus.BAD_REQUEST, "400_005", "유효하지 않은 상태 전이입니다."),
 
     // 403
     FORBIDDEN(HttpStatus.FORBIDDEN, "403_000", "접근 권한이 없습니다."),
@@ -18,6 +21,12 @@ public enum ErrorCode {
     NOT_FOUND_END_POINT(HttpStatus.NOT_FOUND, "404_000", "존재하지 않는 API 경로입니다."),
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "404_001", "요청하신 게시글을 찾을 수 없습니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "404_002", "사용자를 찾을 수 없습니다."),
+    REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "404_003", "요청하신 신고를 찾을 수 없습니다."),
+
+    // 409 (중복/충돌)
+    DUPLICATE_REPORT(HttpStatus.CONFLICT, "409_001", "이미 신고한 게시글입니다."),
+    ALREADY_RESOLVED(HttpStatus.CONFLICT, "409_002", "이미 처리 완료된 신고입니다."),
+    ALREADY_HIDDEN(HttpStatus.CONFLICT, "409_003", "이미 숨김 처리된 게시글입니다."),
 
     // 500
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500_000", "서버 내부 오류가 발생했습니다.");
@@ -32,15 +41,4 @@ public enum ErrorCode {
         this.message = message;
     }
 
-    public HttpStatus getStatus() {
-        return status;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
 }
