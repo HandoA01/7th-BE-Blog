@@ -2,6 +2,7 @@ package com.example.blog.domain.post.service;
 
 import com.example.blog.domain.post.converter.PostConverter;
 import com.example.blog.domain.post.entity.Post;
+import com.example.blog.domain.post.entity.PostStatus;
 import com.example.blog.domain.post.repository.PostRepository;
 import com.example.blog.domain.user.entity.User;
 import com.example.blog.domain.user.repository.UserRepository;
@@ -26,10 +27,10 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
-    // 게시글 목록 조회
+    // 게시글 목록 조회 (ACTIVE만)
     @Transactional(readOnly = true)
     public List<PostSummaryResponse> getPosts() {
-        return postRepository.findAllByDeletedAtIsNull()
+        return postRepository.findAllByDeletedAtIsNullAndStatus(PostStatus.ACTIVE)
                 .stream()
                 .map(PostConverter::toSummaryResponse)
                 .collect(Collectors.toList());
@@ -59,7 +60,6 @@ public class PostService {
         Post post = postRepository.findByIdAndDeletedAtIsNull(postId)
                 .orElseThrow(() -> new PostNotFoundException(postId));
 
-        // 작성자 권한 확인
         if (!post.getUser().getId().equals(userId)) {
             throw new PostForbiddenException();
         }
@@ -68,17 +68,29 @@ public class PostService {
         return PostConverter.toDetailResponse(post);
     }
 
-    // 게시글 삭제 (soft delete)
+    // 게시글 삭제
     @Transactional
     public void deletePost(Long userId, Long postId) {
         Post post = postRepository.findByIdAndDeletedAtIsNull(postId)
                 .orElseThrow(() -> new PostNotFoundException(postId));
 
-        // 작성자 권한 확인
         if (!post.getUser().getId().equals(userId)) {
             throw new PostForbiddenException();
         }
 
         post.delete();
+    }
+
+    // 게시글 숨김
+    @Transactional
+    public void hidePost(Long userId, Long postId) {
+        Post post = postRepository.findByIdAndDeletedAtIsNull(postId)
+                .orElseThrow(() -> new PostNotFoundException(postId));
+
+        if (!post.getUser().getId().equals(userId)) {
+            throw new PostForbiddenException();
+        }
+
+        post.hide();
     }
 }

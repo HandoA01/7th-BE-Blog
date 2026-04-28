@@ -56,4 +56,13 @@ public class PostController {
         postService.deletePost(userId, postId);
         return ApiResponse.onSuccess();
     }
+
+    // PATCH /posts/{postId}/hide - 게시글 숨김
+    @PatchMapping("/{postId}/hide")
+    public ApiResponse<Void> hidePost(
+            @RequestHeader("X-USER-ID") Long userId,
+            @PathVariable Long postId) {
+        postService.hidePost(userId, postId);
+        return ApiResponse.onSuccess();
+    }
 }
