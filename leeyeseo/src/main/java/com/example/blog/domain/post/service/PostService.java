@@ -45,9 +45,9 @@ public class PostService {
 
     // 게시글 작성
     @Transactional
-    public PostDetailResponse createPost(PostCreateRequest request) {
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new UserNotFoundException(request.getUserId()));
+    public PostDetailResponse createPost(Long userId, PostCreateRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
         Post post = PostConverter.toEntity(request, user);
         postRepository.save(post);
         return PostConverter.toDetailResponse(post);
@@ -55,12 +55,12 @@ public class PostService {
 
     // 게시글 수정
     @Transactional
-    public PostDetailResponse updatePost(Long postId, PostUpdateRequest request) {
+    public PostDetailResponse updatePost(Long userId, Long postId, PostUpdateRequest request) {
         Post post = postRepository.findByIdAndDeletedAtIsNull(postId)
                 .orElseThrow(() -> new PostNotFoundException(postId));
 
         // 작성자 권한 확인
-        if (!post.getUser().getId().equals(request.getUserId())) {
+        if (!post.getUser().getId().equals(userId)) {
             throw new PostForbiddenException();
         }
 
@@ -70,7 +70,7 @@ public class PostService {
 
     // 게시글 삭제 (soft delete)
     @Transactional
-    public void deletePost(Long postId, Long userId) {
+    public void deletePost(Long userId, Long postId) {
         Post post = postRepository.findByIdAndDeletedAtIsNull(postId)
                 .orElseThrow(() -> new PostNotFoundException(postId));
 
@@ -79,6 +79,6 @@ public class PostService {
             throw new PostForbiddenException();
         }
 
-        post.delete(); // BaseEntity의 soft delete
+        post.delete();
     }
 }

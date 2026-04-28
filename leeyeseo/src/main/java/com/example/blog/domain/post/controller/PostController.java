@@ -34,24 +34,26 @@ public class PostController {
     // POST /posts - 게시글 작성
     @PostMapping
     public ApiResponse<PostDetailResponse> createPost(
+            @RequestHeader("X-USER-ID") Long userId,
             @Valid @RequestBody PostCreateRequest request) {
-        return ApiResponse.onSuccess(postService.createPost(request));
+        return ApiResponse.onSuccess(postService.createPost(userId, request));
     }
 
     // PATCH /posts/{postId} - 게시글 수정
     @PatchMapping("/{postId}")
     public ApiResponse<PostDetailResponse> updatePost(
+            @RequestHeader("X-USER-ID") Long userId,
             @PathVariable Long postId,
             @Valid @RequestBody PostUpdateRequest request) {
-        return ApiResponse.onSuccess(postService.updatePost(postId, request));
+        return ApiResponse.onSuccess(postService.updatePost(userId, postId, request));
     }
 
     // DELETE /posts/{postId} - 게시글 삭제
     @DeleteMapping("/{postId}")
     public ApiResponse<Void> deletePost(
-            @PathVariable Long postId,
-            @RequestParam Long userId) {
-        postService.deletePost(postId, userId);
+            @RequestHeader("X-USER-ID") Long userId,
+            @PathVariable Long postId) {
+        postService.deletePost(userId, postId);
         return ApiResponse.onSuccess();
     }
 }
