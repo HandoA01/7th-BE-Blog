@@ -68,7 +68,7 @@ public class PostService {
         return PostConverter.toDetailResponse(post);
     }
 
-    // 게시글 삭제
+    // 게시글 삭제 (soft delete)
     @Transactional
     public void deletePost(Long userId, Long postId) {
         Post post = postRepository.findByIdAndDeletedAtIsNull(postId)
