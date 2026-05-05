@@ -55,6 +55,50 @@ public class GlobalExceptionHandler {
                 ));
     }
 
+    // 신고 없음 404
+    @ExceptionHandler(ReportNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleReportNotFound(ReportNotFoundException e) {
+        return ResponseEntity
+                .status(e.getErrorCode().getStatus())
+                .body(ApiResponse.onFailure(
+                        e.getErrorCode().getCode(),
+                        e.getMessage()
+                ));
+    }
+
+    // 중복 신고 409
+    @ExceptionHandler(DuplicateReportException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDuplicateReport(DuplicateReportException e) {
+        return ResponseEntity
+                .status(e.getErrorCode().getStatus())
+                .body(ApiResponse.onFailure(
+                        e.getErrorCode().getCode(),
+                        e.getMessage()
+                ));
+    }
+
+    // 이미 처리된 신고 409
+    @ExceptionHandler(AlreadyResolvedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAlreadyResolved(AlreadyResolvedException e) {
+        return ResponseEntity
+                .status(e.getErrorCode().getStatus())
+                .body(ApiResponse.onFailure(
+                        e.getErrorCode().getCode(),
+                        e.getMessage()
+                ));
+    }
+
+    // 이미 숨김 처리된 게시글 409
+    @ExceptionHandler(AlreadyHiddenException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAlreadyHidden(AlreadyHiddenException e) {
+        return ResponseEntity
+                .status(e.getErrorCode().getStatus())
+                .body(ApiResponse.onFailure(
+                        e.getErrorCode().getCode(),
+                        e.getMessage()
+                ));
+    }
+
     // @Valid 검증 실패 400
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidation(MethodArgumentNotValidException e) {

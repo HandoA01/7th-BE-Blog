@@ -1,6 +1,7 @@
 package com.example.blog.domain.post.entity;
 
 import com.example.blog.domain.user.entity.User;
+import com.example.blog.exception.AlreadyHiddenException;
 import com.example.blog.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -34,9 +35,22 @@ public class Post extends BaseEntity {
     @Comment("게시글 이미지 URL")
     private String imageUrl;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 20)
+    @Builder.Default
+    @Comment("게시글 상태 (ACTIVE/HIDDEN)")
+    private PostStatus status = PostStatus.ACTIVE;
+
     public void update(String title, String content, String imageUrl) {
         this.title = title;
         this.content = content;
         this.imageUrl = imageUrl;
+    }
+
+    public void hide() {
+        if (this.status == PostStatus.HIDDEN) {
+            throw new AlreadyHiddenException();
+        }
+        this.status = PostStatus.HIDDEN;
     }
 }
