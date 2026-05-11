@@ -3,18 +3,25 @@ package com.example.blog.global.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 @Getter
 @JsonPropertyOrder({"isSuccess", "code", "message", "result"})
+@Schema(description = "공통 API 응답 포맷")
 public class ApiResponse<T> {
 
+    @Schema(description = "요청 성공 여부", example = "true")
     @JsonProperty("isSuccess")
     private final Boolean isSuccess;
 
+    @Schema(description = "응답 코드 (성공: 2000, 실패: 4xx_xxx / 5xx_xxx)", example = "2000")
     private final String code;
+
+    @Schema(description = "응답 메시지", example = "OK")
     private final String message;
 
+    @Schema(description = "응답 데이터 (실패 시 null)")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private final T result;
 

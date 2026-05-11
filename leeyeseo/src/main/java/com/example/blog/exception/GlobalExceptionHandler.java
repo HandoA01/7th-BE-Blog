@@ -99,6 +99,28 @@ public class GlobalExceptionHandler {
                 ));
     }
 
+    // 댓글 없음 404
+    @ExceptionHandler(CommentNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleCommentNotFound(CommentNotFoundException e) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.onFailure(
+                        e.getErrorCode().getCode(),
+                        e.getMessage()
+                ));
+    }
+
+    // 댓글 권한 없음 403
+    @ExceptionHandler(CommentForbiddenException.class)
+    public ResponseEntity<ApiResponse<Void>> handleCommentForbidden(CommentForbiddenException e) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(ApiResponse.onFailure(
+                        e.getErrorCode().getCode(),
+                        e.getMessage()
+                ));
+    }
+
     // @Valid 검증 실패 400
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidation(MethodArgumentNotValidException e) {

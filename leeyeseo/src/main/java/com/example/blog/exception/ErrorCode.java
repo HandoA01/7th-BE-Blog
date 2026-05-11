@@ -16,12 +16,14 @@ public enum ErrorCode {
     // 403
     FORBIDDEN(HttpStatus.FORBIDDEN, "403_000", "접근 권한이 없습니다."),
     NOT_POST_OWNER(HttpStatus.FORBIDDEN, "403_001", "해당 게시글의 작성자가 아닙니다."),
+    NOT_COMMENT_OWNER(HttpStatus.FORBIDDEN, "403_002", "해당 댓글의 작성자가 아닙니다."),
 
     // 404
     NOT_FOUND_END_POINT(HttpStatus.NOT_FOUND, "404_000", "존재하지 않는 API 경로입니다."),
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "404_001", "요청하신 게시글을 찾을 수 없습니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "404_002", "사용자를 찾을 수 없습니다."),
     REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "404_003", "요청하신 신고를 찾을 수 없습니다."),
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "404_004", "요청하신 댓글을 찾을 수 없습니다."),
 
     // 409 (중복/충돌)
     DUPLICATE_REPORT(HttpStatus.CONFLICT, "409_001", "이미 신고한 게시글입니다."),
