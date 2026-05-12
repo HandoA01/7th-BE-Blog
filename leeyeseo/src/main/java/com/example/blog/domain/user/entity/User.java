@@ -29,7 +29,7 @@ public class User extends BaseEntity {
     @Comment("이름")
     private String name;
 
-    @Column(name = "nickname", nullable = false, length = 50)
+    @Column(name = "nickname", nullable = false, unique = true, length = 50)
     @Comment("닉네임")
     private String nickname;
 
@@ -40,4 +40,15 @@ public class User extends BaseEntity {
     @Column(name = "profile_image", length = 1000)
     @Comment("프로필 이미지 URL")
     private String profileImage;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false, length = 20)
+    @Comment("사용자 권한")
+    @Builder.Default
+    private Role role = Role.USER;
+
+    // 비밀번호 암호화 후 갱신 (회원가입 시 사용)
+    public void encodePassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
 }
