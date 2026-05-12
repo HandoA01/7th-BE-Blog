@@ -11,3 +11,9 @@ spring:
   h2:
     console:
       enabled: true
+
+# JWT 설정
+jwt:
+  secret: LeetsBackendKx5_93Jv_1Rz_lQwT9pXe3bD7sUaFzYtAbCdEfGhIjKlMnOpQrStUvWxYz
+  access-token-expiration: 1800000
+  refresh-token-expiration: 1209600000
