@@ -13,6 +13,13 @@ public enum ErrorCode {
     INVALID_TYPE_VALUE(HttpStatus.BAD_REQUEST, "400_004", "데이터 타입이 올바르지 않습니다."),
     INVALID_STATE_TRANSITION(HttpStatus.BAD_REQUEST, "400_005", "유효하지 않은 상태 전이입니다."),
 
+    // 401 (인증 실패)
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "401_000", "인증이 필요합니다."),
+    INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "401_001", "비밀번호가 일치하지 않습니다."),
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "401_002", "유효하지 않은 토큰입니다."),
+    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "401_003", "만료된 토큰입니다."),
+    REFRESH_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "401_004", "저장된 Refresh Token을 찾을 수 없습니다."),
+
     // 403
     FORBIDDEN(HttpStatus.FORBIDDEN, "403_000", "접근 권한이 없습니다."),
     NOT_POST_OWNER(HttpStatus.FORBIDDEN, "403_001", "해당 게시글의 작성자가 아닙니다."),
@@ -29,6 +36,8 @@ public enum ErrorCode {
     DUPLICATE_REPORT(HttpStatus.CONFLICT, "409_001", "이미 신고한 게시글입니다."),
     ALREADY_RESOLVED(HttpStatus.CONFLICT, "409_002", "이미 처리 완료된 신고입니다."),
     ALREADY_HIDDEN(HttpStatus.CONFLICT, "409_003", "이미 숨김 처리된 게시글입니다."),
+    DUPLICATE_EMAIL(HttpStatus.CONFLICT, "409_004", "이미 사용 중인 이메일입니다."),
+    DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "409_005", "이미 사용 중인 닉네임입니다."),
 
     // 500
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500_000", "서버 내부 오류가 발생했습니다.");

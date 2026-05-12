@@ -121,6 +121,72 @@ public class GlobalExceptionHandler {
                 ));
     }
 
+    // 비밀번호 불일치 401
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<ApiResponse<Void>> handleInvalidPassword(InvalidPasswordException e) {
+        return ResponseEntity
+                .status(e.getErrorCode().getStatus())
+                .body(ApiResponse.onFailure(
+                        e.getErrorCode().getCode(),
+                        e.getMessage()
+                ));
+    }
+
+    // 유효하지 않은 토큰 401
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<ApiResponse<Void>> handleInvalidToken(InvalidTokenException e) {
+        return ResponseEntity
+                .status(e.getErrorCode().getStatus())
+                .body(ApiResponse.onFailure(
+                        e.getErrorCode().getCode(),
+                        e.getMessage()
+                ));
+    }
+
+    // 만료된 토큰 401
+    @ExceptionHandler(ExpiredTokenException.class)
+    public ResponseEntity<ApiResponse<Void>> handleExpiredToken(ExpiredTokenException e) {
+        return ResponseEntity
+                .status(e.getErrorCode().getStatus())
+                .body(ApiResponse.onFailure(
+                        e.getErrorCode().getCode(),
+                        e.getMessage()
+                ));
+    }
+
+    // Refresh Token 없음 401
+    @ExceptionHandler(RefreshTokenNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleRefreshTokenNotFound(RefreshTokenNotFoundException e) {
+        return ResponseEntity
+                .status(e.getErrorCode().getStatus())
+                .body(ApiResponse.onFailure(
+                        e.getErrorCode().getCode(),
+                        e.getMessage()
+                ));
+    }
+
+    // 이메일 중복 409
+    @ExceptionHandler(DuplicateEmailException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDuplicateEmail(DuplicateEmailException e) {
+        return ResponseEntity
+                .status(e.getErrorCode().getStatus())
+                .body(ApiResponse.onFailure(
+                        e.getErrorCode().getCode(),
+                        e.getMessage()
+                ));
+    }
+
+    // 닉네임 중복 409
+    @ExceptionHandler(DuplicateNicknameException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDuplicateNickname(DuplicateNicknameException e) {
+        return ResponseEntity
+                .status(e.getErrorCode().getStatus())
+                .body(ApiResponse.onFailure(
+                        e.getErrorCode().getCode(),
+                        e.getMessage()
+                ));
+    }
+
     // @Valid 검증 실패 400
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidation(MethodArgumentNotValidException e) {
