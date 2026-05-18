@@ -23,7 +23,7 @@ public class RefreshToken extends BaseEntity {
     @Comment("사용자 ID (한 사용자당 하나의 Refresh Token만 유지)")
     private Long userId;
 
-    @Column(name = "token", nullable = false, length = 500)
+    @Column(name = "token", nullable = false, unique = true, length = 500)
     @Comment("Refresh Token 값")
     private String token;
 
