@@ -9,11 +9,7 @@ import com.example.blog.dto.auth.LoginRequest;
 import com.example.blog.dto.auth.ReissueRequest;
 import com.example.blog.dto.auth.SignupRequest;
 import com.example.blog.dto.auth.TokenResponse;
-import com.example.blog.exception.DuplicateEmailException;
-import com.example.blog.exception.DuplicateNicknameException;
-import com.example.blog.exception.InvalidPasswordException;
-import com.example.blog.exception.RefreshTokenNotFoundException;
-import com.example.blog.exception.UserNotFoundException;
+import com.example.blog.exception.*;
 import com.example.blog.global.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -65,11 +61,11 @@ public class AuthService {
     public TokenResponse login(LoginRequest request) {
         // 1. 이메일로 사용자 조회
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new UserNotFoundException(0L));
+                .orElseThrow(InvalidLoginException::new);
 
         // 2. 비밀번호 검증
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new InvalidPasswordException();
+            throw new InvalidLoginException();
         }
 
         // 3. 토큰 발급

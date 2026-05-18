@@ -21,6 +21,16 @@ public class GlobalExceptionHandler {
                         e.getMessage()
                 ));
     }
+    // 로그인 실패 401
+    @ExceptionHandler(InvalidLoginException.class)
+    public ResponseEntity<ApiResponse<Void>> handleInvalidLogin(InvalidLoginException e) {
+        return ResponseEntity
+                .status(e.getErrorCode().getStatus())
+                .body(ApiResponse.onFailure(
+                        e.getErrorCode().getCode(),
+                        e.getMessage()
+                ));
+    }
 
     // 게시글 없음 404
     @ExceptionHandler(PostNotFoundException.class)
