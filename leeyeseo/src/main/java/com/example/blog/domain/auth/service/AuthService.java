@@ -2,6 +2,7 @@ package com.example.blog.domain.auth.service;
 
 import com.example.blog.domain.auth.entity.RefreshToken;
 import com.example.blog.domain.auth.repository.RefreshTokenRepository;
+import com.example.blog.domain.user.entity.Provider;
 import com.example.blog.domain.user.entity.Role;
 import com.example.blog.domain.user.entity.User;
 import com.example.blog.domain.user.repository.UserRepository;
@@ -9,7 +10,10 @@ import com.example.blog.dto.auth.LoginRequest;
 import com.example.blog.dto.auth.ReissueRequest;
 import com.example.blog.dto.auth.SignupRequest;
 import com.example.blog.dto.auth.TokenResponse;
+import com.example.blog.dto.auth.kakao.KakaoTokenResponse;
+import com.example.blog.dto.auth.kakao.KakaoUserInfoResponse;
 import com.example.blog.exception.*;
+import com.example.blog.global.oauth.KakaoOAuthClient;
 import com.example.blog.global.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +31,7 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final KakaoOAuthClient kakaoOAuthClient;
 
     // 회원가입
     @Transactional
@@ -49,6 +55,7 @@ public class AuthService {
                 .nickname(request.getNickname())
                 .phoneNumber(request.getPhoneNumber())
                 .role(Role.USER)
+                .provider(Provider.LOCAL)
                 .build();
         userRepository.save(user);
 
@@ -91,7 +98,85 @@ public class AuthService {
         return issueTokens(user);
     }
 
+    // 카카오 로그인 (신규)
+    @Transactional
+    public TokenResponse kakaoLogin(String code) {
+        // 1. 인가 코드로 카카오 액세스 토큰 발급
+        KakaoTokenResponse tokenResponse = kakaoOAuthClient.getAccessToken(code);
+
+        // 2. 카카오 액세스 토큰으로 사용자 정보 조회
+        KakaoUserInfoResponse userInfo = kakaoOAuthClient.getUserInfo(tokenResponse.getAccessToken());
+
+        // 3. 기존 카카오 회원 조회, 없으면 자동 회원가입
+        String providerId = String.valueOf(userInfo.getId());
+        User user = userRepository.findByProviderAndProviderId(Provider.KAKAO, providerId)
+                .orElseGet(() -> createKakaoUser(userInfo, providerId));
+
+        // 4. 우리 서비스 JWT 발급
+        return issueTokens(user);
+    }
+
     // ===== private helper =====
+
+    // 카카오 사용자 자동 회원가입
+    private User createKakaoUser(KakaoUserInfoResponse userInfo, String providerId) {
+        // 카카오는 이메일을 못 받으므로 가짜 이메일 생성
+        String fakeEmail = "kakao_" + providerId + "@kakao.local";
+
+        // 카카오 닉네임 추출 (kakao_account.profile 우선, 없으면 properties)
+        String kakaoNickname = extractNickname(userInfo);
+
+        // 닉네임 중복 시 카카오 ID 일부 붙여서 고유하게 변경
+        String nickname = kakaoNickname;
+        if (userRepository.existsByNickname(nickname)) {
+            nickname = kakaoNickname + "_" + providerId;
+        }
+
+        // 카카오 사용자는 비밀번호 사용 안 하지만, 컬럼이 nullable=false라 랜덤 값으로 채움
+        String randomPassword = passwordEncoder.encode(UUID.randomUUID().toString());
+
+        // 카카오 프로필 이미지 추출
+        String profileImage = extractProfileImage(userInfo);
+
+        User newUser = User.builder()
+                .email(fakeEmail)
+                .password(randomPassword)
+                .name(kakaoNickname)
+                .nickname(nickname)
+                .profileImage(profileImage)
+                .role(Role.USER)
+                .provider(Provider.KAKAO)
+                .providerId(providerId)
+                .build();
+
+        return userRepository.save(newUser);
+    }
+
+    // 카카오 응답에서 닉네임 추출
+    private String extractNickname(KakaoUserInfoResponse userInfo) {
+        if (userInfo.getKakaoAccount() != null
+                && userInfo.getKakaoAccount().getProfile() != null
+                && userInfo.getKakaoAccount().getProfile().getNickname() != null) {
+            return userInfo.getKakaoAccount().getProfile().getNickname();
+        }
+        if (userInfo.getProperties() != null
+                && userInfo.getProperties().getNickname() != null) {
+            return userInfo.getProperties().getNickname();
+        }
+        return "카카오사용자";
+    }
+
+    // 카카오 응답에서 프로필 이미지 URL 추출
+    private String extractProfileImage(KakaoUserInfoResponse userInfo) {
+        if (userInfo.getKakaoAccount() != null
+                && userInfo.getKakaoAccount().getProfile() != null) {
+            return userInfo.getKakaoAccount().getProfile().getProfileImageUrl();
+        }
+        if (userInfo.getProperties() != null) {
+            return userInfo.getProperties().getProfileImage();
+        }
+        return null;
+    }
 
     // 토큰 발급 + RefreshToken DB 저장 공통 로직
     private TokenResponse issueTokens(User user) {
