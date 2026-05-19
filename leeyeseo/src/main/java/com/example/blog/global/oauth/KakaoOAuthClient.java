@@ -25,6 +25,9 @@ public class KakaoOAuthClient {
     @Value("${kakao.client-id}")
     private String clientId;
 
+    @Value("${kakao.client-secret}")
+    private String clientSecret;
+
     @Value("${kakao.redirect-uri}")
     private String redirectUri;
 
@@ -43,14 +46,13 @@ public class KakaoOAuthClient {
      * POST https://kauth.kakao.com/oauth/token
      */
     public KakaoTokenResponse getAccessToken(String code) {
-        // HTTP 헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        // HTTP 바디 설정 (x-www-form-urlencoded)
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", clientId);
+        body.add("client_secret", clientSecret);
         body.add("redirect_uri", redirectUri);
         body.add("code", code);
 
