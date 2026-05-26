@@ -132,8 +132,8 @@ public class AuthService {
             nickname = kakaoNickname + "_" + providerId;
         }
 
-        // 카카오 사용자는 비밀번호 사용 안 하지만, 컬럼이 nullable=false라 랜덤 값으로 채움
-        String randomPassword = passwordEncoder.encode(UUID.randomUUID().toString());
+        // 카카오 사용자는 비밀번호 검증을 거치지 않으므로, nullable=false 제약만 만족시키는 랜덤 값으로 채움 (인코딩 불필요)
+        String randomPassword = UUID.randomUUID().toString();
 
         // 카카오 프로필 이미지 추출
         String profileImage = extractProfileImage(userInfo);
