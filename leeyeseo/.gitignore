@@ -9,6 +9,10 @@ build/
 application-local.yaml
 **/application-local.yaml
 
+# 운영 설정 파일 (GitHub Secret으로 관리)
+application.yaml
+**/application.yaml
+
 ### STS ###
 .apt_generated
 .classpath
