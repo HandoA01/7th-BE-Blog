@@ -57,7 +57,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: "leeyeseo/Dockerfile,leeyeseo/docker-compose.yml,leeyeseo/.env,leeyeseo/build/libs/*.jar,leeyeseo/src/main/resources/application.yaml"
+          source: "leeyeseo/Dockerfile,leeyeseo/docker-compose.yml,leeyeseo/.env,leeyeseo/build/libs/*.jar"
           target: "~/app"
           strip_components: 1
 
