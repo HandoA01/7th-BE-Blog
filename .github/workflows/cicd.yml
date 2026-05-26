@@ -28,9 +28,11 @@ jobs:
           cache: gradle
 
       - name: Inject application.yaml from Secret
+        env:
+          APPLICATION_YML: ${{ secrets.APPLICATION_YML }}
         run: |
           mkdir -p src/main/resources
-          echo "${{ secrets.APPLICATION_YML }}" > src/main/resources/application.yaml
+          printf '%s\n' "$APPLICATION_YML" > src/main/resources/application.yaml
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
