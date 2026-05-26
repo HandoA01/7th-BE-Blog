@@ -1,5 +1,6 @@
 package com.example.blog.domain.user.repository;
 
+import com.example.blog.domain.user.entity.Provider;
 import com.example.blog.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -15,4 +16,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // 닉네임 중복 체크 (회원가입 시 사용)
     boolean existsByNickname(String nickname);
+
+    // OAuth 제공자 + 제공자 ID로 사용자 조회 (카카오 로그인 시 사용)
+    Optional<User> findByProviderAndProviderId(Provider provider, String providerId);
 }

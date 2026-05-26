@@ -47,6 +47,16 @@ public class User extends BaseEntity {
     @Builder.Default
     private Role role = Role.USER;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "provider", nullable = false, length = 20)
+    @Comment("로그인 제공자 (LOCAL/KAKAO)")
+    @Builder.Default
+    private Provider provider = Provider.LOCAL;
+
+    @Column(name = "provider_id", length = 100)
+    @Comment("OAuth 제공자가 발급한 사용자 식별자 (카카오 ID 등)")
+    private String providerId;
+
     // 비밀번호 암호화 후 갱신 (회원가입 시 사용)
     public void encodePassword(String encodedPassword) {
         this.password = encodedPassword;
